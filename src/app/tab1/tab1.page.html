@@ -7,11 +7,87 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-content>
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="12">
+          <ion-select label="Tipo" [multiple]="true"
+          interface="popover" label-placement="floating"
+          [(ngModel)]="filter"
+          (ionChange)="filterProducts()"
+          >
+          <ion-select-option value="Abarrotes">
+            Abarrotes
+          </ion-select-option>
+          <ion-select-option value="Frutas y verduras">
+            Frutas y verduras
+          </ion-select-option>
+          <ion-select-option value="Limpieza">
+            Limpieza
+          </ion-select-option>
+          <ion-select-option value="Farmacia">
+            Farmacia
+          </ion-select-option>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
-</ion-content>
+          </ion-select>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6" *ngFor="let product of productsFounds; index as i">
+          <ion-card product.type>
+            <img [src]="product.photo+i" />
+            <ion-card-header>
+              <ion-card-title>
+                {{product.name}}
+                <ion-badge [ngStyle]="{ 'background-color': categoryColors[product.type] }">{{product.type}}</ion-badge>
+              </ion-card-title>
+              <ion-card-subtitle>{{ product.price | currency}}</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="">{{product.description}}</div>              
+            </ion-card-content>
+            <ion-button color="primary" (click)="addToCar(product)">Agregar al carrito</ion-button>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      
+      <div *ngIf="!carritoVacio()">
+        <h2>Carrito de Compras</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <thead>
+            <tr style="background-color: #f2f2f2; border: 1px solid #ddd; color:black;">
+              <th style="text-align: left; padding: 8px; ">Producto</th>
+              <th style="text-align: left; padding: 8px; ">Precio</th>
+              <th style="text-align: left; padding: 8px;">Cantidad</th>
+              <th style="text-align: left; padding: 8px;">Subtotal</th>
+              <th style="text-align: left; padding: 8px; width: 20px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of carritoArray" style="border: 1px solid #ddd;">
+              <td style="text-align: left; padding: 8px;">{{ producto.product.name }}</td>
+              <td style="text-align: left; padding: 8px;">{{ producto.product.price | currency }}</td>
+              <td style="text-align: left; padding: 8px;">{{ producto.quantity }}</td>
+              <td style="text-align: left; padding: 8px;">{{ calcularSubtotal(producto.product) | currency }}</td>
+              <td style="text-align: left; padding: 8px;">
+                <ion-button (click)="deleteFromCar(producto.product)" color="danger">Borrar</ion-button>
+              </td>
+            </tr>
+          </tbody>
+          <tr style="border: 1px solid #ddd;">
+            <td colspan="3" style="text-align: right; padding: 8px;"><strong>Total:</strong></td>
+            <td colspan="2" style="text-align: left; padding: 8px;">
+              <strong>{{ calcularTotalCarrito() | currency }}</strong>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+
+    </ion-grid>    
+  </ion-content>
+
+
+<!-- Para obtener la ip externa
+  ionic serve --external -->
