@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Product } from '../models/products.model';
+import { Product } from '../models/product.models';
+import { CarritoService } from '../services/carrito.service';
 
 @Component({
   selector: 'app-tab1',
@@ -7,8 +8,7 @@ import { Product } from '../models/products.model';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-
-  public products : Product[] = [];
+  public products: Product[] = [];
   public productsFounds: Product[] = [];
   public filter = [
     "Abarrotes",
@@ -17,72 +17,61 @@ export class Tab1Page {
     "Farmacia"
   ];
 
-  // public car: Product[] = [];
   public car: { [productId: number]: { product: Product, quantity: number } } = {};
-  
 
-  public categoryColors: { [key: string]: string } = {
-    "Abarrotes": "blue",
-    "Frutas y verduras": "green",
-    "Limpieza": "red",
-    "Farmacia": "orange"
-  };
-
-  constructor() {
+  constructor(private carritoService: CarritoService) {
     this.products.push({
       id: 1,
       name: "Coca Cola",
       price: 20,
-      description: "Bebida coca cola", 
+      description: "Bebida coca cola",
       type: "Abarrotes",
       photo: "https://picsum.photos/500/300?random=1",
+      color: "primary"
     });
     this.products.push({
       id: 2,
       name: "Jabón zote",
       price: 40,
-      description: "Jabón en barra", 
+      description: "Jabón en barra",
       type: "Limpieza",
-      photo: "https://picsum.photos/500/300?random=1",
+      photo: "https://picsum.photos/500/300?random=2",
+      color: "secondary"
     });
 
     this.products.push({
       id: 3,
       name: "Manzana",
       price: 20,
-      description: "Kilo de manzanas perón", 
+      description: "Kilo de manzanas perón",
       type: "Frutas y verduras",
-      photo: "https://picsum.photos/500/300?random=1",
+      photo: "https://picsum.photos/500/300?random=3",
+      color: "warning"
     });
 
     this.products.push({
       id: 4,
       name: "Paracetamol",
       price: 35,
-      description: "Caja con 20 pastillas", 
+      description: "Caja con 20 pastillas",
       type: "Farmacia",
-      photo: "https://picsum.photos/500/300?random=1",
+      photo: "https://picsum.photos/500/300?random=4",
+      color: "danger"
     });
     this.productsFounds = this.products;
   }
 
-  public filterProducts(): void{
+  public filterProducts(): void {
     console.log(this.filter);
     this.productsFounds = this.products.filter(
       item => {
         return this.filter.includes(item.type);
       }
     );
-
   }
 
-  public addToCar(producto: Product): void {
-    const productId = producto.id;
-    if (this.car[productId]) {
-      this.car[productId].quantity++;
-    } else {
-      this.car[productId] = { product: producto, quantity: 1 };
-    }
+  agregarAlCarrito(producto: Product): void {
+    this.carritoService.agregarAlCarrito(producto);
   }
 
   public carritoVacio(): boolean {
@@ -93,17 +82,6 @@ export class Tab1Page {
     return Object.values(this.car);
   }
 
-  public calcularSubtotal(producto: Product): number {
-    const productId = producto.id;
-    if (this.car[productId]) {
-      const quantity = this.car[productId].quantity;
-      return producto.price * quantity;
-    } else {
-      return 0;
-    }
-  }
-  
-
   public calcularTotalCarrito(): number {
     let total = 0;
     for (const productId of Object.keys(this.car)) {
@@ -113,17 +91,4 @@ export class Tab1Page {
     }
     return total;
   }
-
-  public deleteFromCar(producto: Product): void {
-    const productId = producto.id;
-    if (this.car[productId]) {
-      if (this.car[productId].quantity > 1) {
-        this.car[productId].quantity--;
-      } else {
-        delete this.car[productId];
-      }
-    }
-  }
-  
-
 }
