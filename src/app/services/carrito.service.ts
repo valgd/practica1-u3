@@ -7,25 +7,28 @@ import { Product } from '../models/product.models';
 })
 export class CarritoService {
   private carrito: { product: Product, quantity: number }[] = [];
+  private carritoSubject: BehaviorSubject<{ product: Product, quantity: number }[]> = new BehaviorSubject(this.carrito);
 
-  private carritoSubject = new BehaviorSubject<{ product: Product, quantity: number }[]>(this.carrito);
+  constructor() {}
 
-  agregarAlCarrito(producto: Product): void {
-    const productId = producto.id;
-    const item = this.carrito.find((el) => el.product.id === productId);
-    if (item) {
-      item.quantity++;
+  public agregarAlCarrito(producto: Product): void {
+    const productoEnCarrito = this.carrito.find((item) => item.product.id === producto.id);
+
+    if (productoEnCarrito) {
+      productoEnCarrito.quantity++;
     } else {
       this.carrito.push({ product: producto, quantity: 1 });
     }
+
     this.carritoSubject.next(this.carrito);
   }
 
-  obtenerCarrito(): Observable<{ product: Product, quantity: number }[]> {
+  public obtenerCarrito(): Observable<{ product: Product, quantity: number }[]> {
     return this.carritoSubject.asObservable();
   }
 
-  // Otros métodos para gestionar el carrito
-
-  // ...
+  public vaciarCarrito(): void {
+    this.carrito = [];
+    this.carritoSubject.next(this.carrito);
+  }
 }

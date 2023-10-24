@@ -20,6 +20,9 @@
     <ion-item-divider style="text-align: right; font-weight: bold;">
       Total: <span style="float: right;">{{ calcularTotalCarrito() | currency }}</span>
     </ion-item-divider>
+    <ion-item style="text-align: center;">
+      <ion-button expand="full" (click)="realizarPago()">Pagar</ion-button>
+    </ion-item>
   </ion-list>
 
   <!-- Mensaje si el carrito está vacío -->
