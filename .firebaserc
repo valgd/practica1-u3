@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "carrito-int-web2"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
