@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CarritoService } from '../services/carrito.service';
-import { Product } from '../models/product.models';
+import { Product } from '../models/product.model';
 import { ToastController } from '@ionic/angular';
+import { CompraService } from '../services/compra.service';
 
 @Component({
   selector: 'app-tab2',
@@ -13,7 +14,8 @@ export class Tab2Page implements OnInit {
 
   constructor(
     private carritoService: CarritoService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private compraService: CompraService
   ) {}
 
   ngOnInit(): void {
@@ -30,20 +32,19 @@ export class Tab2Page implements OnInit {
     return total;
   }
 
-  public async realizarPago(): Promise<void> {
-    // Aquí puedes realizar acciones de pago, por ejemplo, comunicarte con un servicio de pago.
+  async realizarPago(): Promise<void> {
+    if (this.carrito.length > 0) {
+      this.carritoService.registrarCompra(); // Registra la compra con los productos actuales en el carrito
 
-    // Actualiza tu servicio para vaciar el carrito (elimina directamente los elementos).
-    this.carritoService.vaciarCarrito();
-
-    // Añade un mensaje de "Pago realizado" utilizando el servicio Toast.
-    this.mostrarMensaje("Pago realizado con éxito");
+      this.mostrarMensaje('Pago realizado con éxito');
+    }
   }
+  
 
   async mostrarMensaje(mensaje: string) {
     const toast = await this.toastController.create({
       message: mensaje,
-      duration: 2000, // Duración del mensaje en milisegundos
+      duration: 1000, // Duración del mensaje en milisegundos
       position: 'bottom', // Posición del mensaje en la pantalla
     });
     toast.present();

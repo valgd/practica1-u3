@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Product } from '../models/product.models';
+import { Product } from '../models/product.model';
 import { CarritoService } from '../services/carrito.service';
 import { FavoritosService } from '../services/favoritos.service';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab1',
@@ -22,8 +23,8 @@ export class Tab1Page {
 
   constructor(
     private favoritosService: FavoritosService,
-    private carritoService: CarritoService
-    
+    private carritoService: CarritoService,
+    private toastController: ToastController    
     ) {
     this.products.push({
       id: 1,
@@ -77,6 +78,7 @@ export class Tab1Page {
 
   agregarAlCarrito(producto: Product): void {
     this.carritoService.agregarAlCarrito(producto);
+    this.mostrarMensaje("Producto agregado al carrito.");
   }
 
   public carritoVacio(): boolean {
@@ -99,5 +101,15 @@ export class Tab1Page {
 
   agregarAlFavorito(producto: any) {
     this.favoritosService.agregarFavorito(producto);
+    this.mostrarMensaje("Producto agregado a favoritos.");
+  }
+
+  async mostrarMensaje(mensaje: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 1000, // Duración del mensaje en milisegundos
+      position: 'bottom', // Posición del mensaje en la pantalla
+    });
+    toast.present();
   }
 }
